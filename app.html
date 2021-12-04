@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+  <style>
+        body{
+  background-color: black;
+}
+table{
+  border-collapse: collapse;
+  background-color: black;
+}
+th{
+  color: white;
+  padding:5px;
+  text-align: left;
+  border: 1px solid black;
+}
+td{
+  color: white;
+border: 1px solid white;
+padding: 12px;
+text-align:left;
+letter-spacing: 10px;
+}
+div{
+  background-color: black;
+}
+.con{
+  position: relative;
+  display: inline-block;
+  padding: 30px 150px 30px 15px;
+}
+.sel{
+  background-color: black;
+  color: white;
+}
+button{
+  color: white;
+  background-color: black;
+}
+.contain{
+  border-left: 8px solid white;
+  border-right: 8px solid white;
+}
+#answer{
+  border-collapse: collapse;
+  display: none;
+  text-align: right;
+  font-size: 25px;
+  color:white;
+  font-family: fantasy;
+  widtth:100%;
+  height:30px;
+background-color: #222;
+}
+.eval{
+  margin-top: 50px;
+  border-left: 8px solid white;
+  border-right: 8px solid white;
+}
+#ans{
+  border-collapse: collapse;
+  display: none;
+  text-align: right;
+  font-size: 25px;
+  color:white;
+  font-family: fantasy;
+  widtth:100%;
+  height:30px;
+background-color: #222;
+}
+</style>
+
+      <script>
+          var a,b,c;
+a = "infix";
+b = "infix";
+c = "postfix";
+function myfunc(){
+a = document.getElementById('myselct-from').value;
+b = document.getElementById('myselct-to').value;
+}
+
+function myclick(){
+let exp = document.getElementById('inp1').value;
+if(exp !== "")
+{
+if (a+b === "infixpostfix") {
+  console.log(a+ "  "+b);
+  console.log(infix_to_postfix(exp));
+  document.getElementById('answer').style.display = "block";
+  document.getElementById('answer').innerText = infix_to_postfix(exp);
+
+}
+else if(a+b === "infixprefix"){
+  console.log(a+ "  "+b);
+  console.log(infix_to_prefix(exp));
+  document.getElementById('answer').style.display = "block";
+  document.getElementById('answer').innerText = infix_to_prefix(exp);
+}
+else if (a+b === "prefixinfix") {
+  console.log(a+ "  "+b);
+  console.log(prefix_to_infix(exp));
+  document.getElementById('answer').style.display = "block";
+  document.getElementById('answer').innerText = prefix_to_infix(exp);
+}
+else if (a+b === "prefixpostfix") {
+  console.log(a+ "  "+b);
+  console.log(prefix_to_postfix(exp));
+  document.getElementById('answer').style.display = "block";
+  document.getElementById('answer').innerText = prefix_to_postfix(exp);
+}
+else if (a+b === "postfixinfix") {
+  console.log(a+ "  "+b);
+  console.log(postfix_to_infix(exp));
+  document.getElementById('answer').style.display = "block";
+  document.getElementById('answer').innerText = postfix_to_infix(exp);
+}
+else if (a+b === "postfixprefix") {
+  console.log(a+ "  "+b);
+  console.log(postfix_to_prefix(exp));
+  document.getElementById('answer').style.display = "block";
+  document.getElementById('answer').innerText = postfix_to_prefix(exp);
+}
+else if (a === b) {
+  console.log("same");
+  document.getElementById('answer').style.display = "block";
+  document.getElementById('answer').innerText = exp;
+}
+}
+}
+
+function evaloption(){
+  c = document.getElementById('myeval').value;
+
+}
+
+function myeval(){
+  let exp = document.getElementById('inp2').value;
+  if (exp !== "") {
+    if (c === "postfix") {
+      console.log(postfix_numeric_eval(exp));
+      document.getElementById('ans').style.display = "block";
+      document.getElementById('ans').innerText = postfix_numeric_eval(exp);
+    }
+    else {
+      console.log(prefix_numeric_eval(exp));
+      document.getElementById('ans').style.display = "block";
+      document.getElementById('ans').innerText = prefix_numeric_eval(exp);
+    }
+  }
+}
+function rev(a){
+  let st="";
+  for (let i = 0; i < a.length; i++) {
+    let ch = a.charAt(i);
+    if(ch == '('){
+             st = ')'+st;
+             continue;
+         }
+         if(ch == ')'){
+             st = '('+st;
+             continue;
+         }
+    st = ch + st;
+  }
+  return st;
+}
+function isEmpty(a){
+  if(a.length < 1){
+    return false;
+  }
+  else {
+    return true;
+  }
+}
+function precedence(a){
+  if (a === '+' || a ==='-') {
+    return 1;
+  }
+  if (a === '*' || a ==='/') {
+    return 2;
+  }
+  if (a === '(' || a ===')') {
+    return 3;
+  }
+  return -1;
+}
+
+function peek(a){
+    return (a[a.length-1]);
+}
+function infix_to_postfix(a){
+  let s=[]; let input = a; let output=""; let invalid = false;
+  for(let i=0;i<input.length;i++)
+          {
+            let ch = input.charAt(i);
+              if(ch !== ')' && ch !== '(' && ch !== '+' && ch !== '-' && ch !== '*' && ch !== '/')
+              {
+                  output=output+ch;
+              }
+              else if(ch == ')')
+              {
+                  while(peek(s)!='(')
+                  {
+                      output+=s.pop();
+                  }
+                  s.pop();
+              }
+              else{
+                  while(isEmpty(s) === true)
+                  {
+                      if(peek(s)== '(')
+                      {
+                          //s.pop();
+                          break;
+                      }
+                      if(precedence(peek(s)) < precedence(ch)){
+                          //output+=s.pop();
+                          break;
+                      }
+                      output+=s.pop();
+                  }
+                  s.push(ch);
+              }
+          }
+          while(isEmpty(s) === true){
+              output+=s.pop();
+          }
+            return(output);
+}
+function infix_to_prefix(a){
+  let s=[]; let input = rev(a); let output=""; let invalid = false;
+  for(let i=0;i<input.length;i++)
+          {
+
+              let ch = input.charAt(i);
+              if(ch !== ')' && ch !== '(' && ch !== '+' && ch !== '-' && ch !== '*' && ch !== '/')
+              {
+                  output=output+ch;
+              }
+              else if(ch == ')')
+              {
+                  while(peek(s)!='(')
+                  {
+                      output+=s.pop();
+                  }
+                  s.pop();
+              }
+              else{
+                  while(isEmpty(s) === true)
+                  {
+                      if(peek(s)== '(')
+                      {
+                          //s.pop();
+                          break;
+                      }
+                      if(precedence(peek(s)) < precedence(ch)){
+                          //output+=s.pop();
+                          break;
+                      }
+                      output+=s.pop();
+                  }
+                  s.push(ch);
+              }
+          }
+          while(isEmpty(s) === true){
+              output+=s.pop();
+          }
+            return(rev(output));
+}
+
+function postfix_numeric_eval(a){
+  let stack=[];
+  let out,inp; out = ""; inp = a; let s ="";
+  for(let i = 0 ; i < inp.length; i++){
+    var ch = inp.charAt(i);
+    s= s + ch;
+    if(s === "+"){
+      let a = parseInt(stack.pop());
+      let b = parseInt(stack.pop());
+      out = b + a;
+      stack.push(out.toString());
+    }
+    else if(s === "-"){
+      let a = parseInt(stack.pop());
+      let b = parseInt(stack.pop());
+      out = b - a;
+      stack.push(out.toString());
+    }
+    else if(s === "*"){
+      let a = parseInt(stack.pop());
+      let b = parseInt(stack.pop());
+      out = b * a;
+      stack.push(out.toString());
+    }
+    else if(s === "/"){
+      let a = parseInt(stack.pop());
+      let b = parseInt(stack.pop());
+      out = b / a;
+      stack.push(out.toString());
+    }
+    else{
+      stack.push(s);
+    }
+    s="";
+  }
+  //console.log(stack);
+  return(stack.pop());
+}
+
+function prefix_numeric_eval(a){
+  let stack=[];
+  let out,inp; out = ""; inp = a; let s ="";
+  for(let i = inp.length - 1 ; i >= 0; i--){
+    var ch = inp.charAt(i);
+    s= s + ch;
+    if(s === "+"){
+      let a = parseInt(stack.pop());
+      let b = parseInt(stack.pop());
+      out = a + b;
+      stack.push(out.toString());
+    }
+    else if(s === "-"){
+      let a = parseInt(stack.pop());
+      let b = parseInt(stack.pop());
+      out = a - b;
+      stack.push(out.toString());
+    }
+    else if(s === "*"){
+      let a = parseInt(stack.pop());
+      let b = parseInt(stack.pop());
+      out = a * b;
+      stack.push(out.toString());
+    }
+    else if(s === "/"){
+      let a = parseInt(stack.pop());
+      let b = parseInt(stack.pop());
+      out = a / b;
+      stack.push(out.toString());
+    }
+    else{
+      stack.push(s);
+    }
+    s="";
+  }
+  //console.log(stack);
+  return(stack.pop());
+}
+function postfix_to_infix(a){
+let stack=[];
+let out,inp; out = ""; inp = a; let s ="";
+for(let i = 0 ; i < inp.length; i++){
+  var ch = inp.charAt(i);
+  s= s + ch;
+  if(s === "+"){
+    let a = stack.pop();
+    let b = stack.pop();
+    out = b + "+" + a;
+    stack.push(out);
+  }
+  else if(s === "-"){
+    let a = stack.pop();
+    let b = stack.pop();
+    out = b + "-" + a;
+    stack.push(out);
+  }
+  else if(s === "*"){
+    let a = stack.pop();
+    let b = stack.pop();
+    out = b + "*" + a;
+    stack.push(out);
+  }
+  else if(s === "/"){
+    let a = stack.pop();
+    let b = stack.pop();
+    out = b + "/" + a;
+    stack.push(out);
+  }
+  else{
+    stack.push(s);
+  }
+  s="";
+}
+//console.log(stack);
+return(stack.pop());
+}
+
+function prefix_to_infix(a){
+  let stack=[];
+  let out,inp; out = ""; inp = a; let s ="";
+  for(let i = (inp.length - 1); i >= 0; i--){
+    var ch = inp.charAt(i);
+    s= s + ch;
+    if(s === "+"){
+      let b = stack.pop();
+      let a = stack.pop();
+      out = b + "+" + a;
+      stack.push(out);
+    }
+    else if(s === "-"){
+      let b = stack.pop();
+      let a = stack.pop();
+      out = b + "-" + a;
+      stack.push(out);
+    }
+    else if(s === "*"){
+      let b = stack.pop();
+      let a = stack.pop();
+      out = b + "*" + a;
+      stack.push(out);
+    }
+    else if(s === "/"){
+      let b = stack.pop();
+      let a = stack.pop();
+      out = b + "/" + a;
+      stack.push(out);
+    }
+    else{
+      stack.push(s);
+    }
+    s="";
+}
+return(stack.pop());
+}
+
+function postfix_to_prefix(a){
+  let stack=[];
+  let out,inp; out = ""; inp = a; let s ="";
+  for(let i = 0 ; i < inp.length; i++){
+    var ch = inp.charAt(i);
+    s= s + ch;
+    if(s === "+"){
+      let a = stack.pop();
+      let b = stack.pop();
+      out = "+" + b + a;
+      stack.push(out);
+    }
+    else if(s === "-"){
+      let a = stack.pop();
+      let b = stack.pop();
+      out = "-" + b + a;
+      stack.push(out);
+    }
+    else if(s === "*"){
+      let a = stack.pop();
+      let b = stack.pop();
+      out ="*" + b + a;
+      stack.push(out);
+    }
+    else if(s === "/"){
+      let a = stack.pop();
+      let b = stack.pop();
+      out ="/" + b + a;
+      stack.push(out);
+    }
+    else{
+      stack.push(s);
+    }
+    s="";
+  }
+    return(stack.pop());
+}
+function prefix_to_postfix(a){
+  let stack=[];
+  let out,inp; out = ""; inp = a; let s ="";
+  for(let i = inp.length - 1 ; i >= 0; i--){
+    var ch = inp.charAt(i);
+    s= s + ch;
+    if(s === "+"){
+      let a = stack.pop();
+      let b = stack.pop();
+      out = a + b + "+";
+      stack.push(out);
+    }
+    else if(s === "-"){
+      let a = stack.pop();
+      let b = stack.pop();
+      out = a + b +"-";
+      stack.push(out);
+    }
+    else if(s === "*"){
+      let a = stack.pop();
+      let b = stack.pop();
+      out = a + b + "*";
+      stack.push(out);
+    }
+    else if(s === "/"){
+      let a = stack.pop();
+      let b = stack.pop();
+      out = a + b + "/";
+      stack.push(out);
+    }
+    else{
+      stack.push(s);
+    }
+    s="";
+  }
+    return(stack.pop());
+}
+      </script>
+    <div class="contain-total">
+            <table align="center">
+        <tr>
+          <th>PREFIX</th>
+          <th>INFIX</th>
+          <th>POSTFIX</th>
+        </tr>
+        <tr>
+          <td>+AB</td>
+          <td>A+B</td>
+          <td>AB+</td>
+        </tr>
+        <tr>
+          <td>+A*BC</td>
+          <td>A+B*C</td>
+          <td>ABC*+</td>
+        </tr>
+        <tr>
+          <td>*+ABC</td>
+          <td>(A+B)*C</td>
+          <td>AB+C*</td>
+        </tr>
+        <tr>
+          <td>+A*-BCD</td>
+          <td>A+B*C-D</td>
+          <td>ABC*+D-</td>
+        </tr>
+      </table>
+      <div class="contain">
+        <h1 style="color:white;">Conversion</h1>
+      <div class="con">
+        <form class="form" action="index.html" method="post">
+        <label for="conversion" style="color:white;">From :</label>
+        <select id="myselct-from" onchange="myfunc()">
+        <option value="infix" class="sel">Infix</option>
+        <option value="postfix" class="sel">Postfix</option>
+        <option value="prefix" class="sel">Prefix</option>
+      </select>
+      <br>
+      <input type="text" id="inp1" style="margin-top:15px;" placeholder="Enter The Expression">
+    </div>
+      <div class="con">
+        <label for="conversion" style="color:white;">To :</label>
+        <select id="myselct-to" onchange="myfunc()">
+        <option value="infix" class="sel">Infix</option>
+        <option value="postfix" class="sel">Postfix</option>
+        <option value="prefix" class="sel">Prefix</option>
+      </select><br>
+      <button type="button" name="button" style="margin-top:15px;" onclick="myclick()">Convert</button>
+    </div>
+    <div id="answer">
+    </div>
+    </form>
+      </div>
+      <div class="eval">
+        <h1 style="color:white;">Evaluation</h1>
+        <p style="color:white;">Enter numeric value for eg. 123*+</p>
+        <div class="con">
+        <label for="conversion" style="color:white;">From :</label>
+        <select id="myeval" onchange="evaloption()">
+        <option value="postfix" class="sel">Postfix</option>
+        <option value="prefix" class="sel">Prefix</option>
+      </select>
+      <br>
+      <input type="text" id="inp2" style="margin-top:15px;" placeholder="Enter The Expression">
+      <button type="button" name="button" style="margin :15px;" onclick="myeval()">Evaluate</button>
+
+    </div>
+    <div id="ans">
+    </div>
+    </div>
+    </div>
+    <script src="script.js" charset="utf-8"></script>
+  </body>
+</html>
